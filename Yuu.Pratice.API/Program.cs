@@ -1,6 +1,10 @@
 
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+using Serilog.Events;
 using Yuu.Pratice.API.Database;
+using Yuu.Pratice.API.Services.TouristRoutes;
+using static Serilog.Log;
 
 namespace Yuu.Pratice.API
 {
@@ -8,6 +12,14 @@ namespace Yuu.Pratice.API
     {
         public static void Main(string[] args)
         {
+            Logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.Seq("http://localhost:5341")
+                .CreateLogger();
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -16,6 +28,9 @@ namespace Yuu.Pratice.API
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DbContext"));
             });
 
+            builder.Services.AddScoped<ITouristRouteRepository, TouristRouteRepository>();
+
+            builder.Services.AddSerilog();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -31,6 +46,10 @@ namespace Yuu.Pratice.API
             }
 
             app.UseHttpsRedirection();
+
+            app.UseSerilogRequestLogging();
+
+            app.UseRouting();
 
             app.UseAuthorization();
             app.UseAuthentication();
