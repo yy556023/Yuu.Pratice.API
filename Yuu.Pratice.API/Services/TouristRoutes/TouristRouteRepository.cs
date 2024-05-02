@@ -1,16 +1,32 @@
-﻿using Yuu.Pratice.API.Models.TouristRoutes;
+﻿using Microsoft.EntityFrameworkCore;
+using Yuu.Pratice.API.Database;
+using Yuu.Pratice.API.Models.TouristRoutes;
 
 namespace Yuu.Pratice.API.Services.TouristRoutes;
 
-public class TouristRouteRepository : ITouristRouteRepository
+public class TouristRouteRepository(AppDbContext context) : ITouristRouteRepository
 {
-    public IEnumerable<TouristRoute> GetTouristRoutes()
+    private readonly AppDbContext _context = context;
+
+    public async Task<IList<TouristRoute>> GetTouristRoutes()
     {
-        throw new NotImplementedException();
+        return await _context.TouristRoutes.ToListAsync();
     }
 
-    public TouristRoute GetTouristRoute(Guid touristRouteId)
+    public async Task<TouristRoute> GetTouristRoute(Guid touristRouteId)
     {
-        throw new NotImplementedException();
+        return (await _context.TouristRoutes.FindAsync(touristRouteId))!;
+    }
+
+    public async Task<bool> TouristRouteExist(Guid touristRouteId)
+    {
+        return await _context.TouristRoutes.AnyAsync(e => e.Id == touristRouteId)!;
+    }
+
+    public async Task<IList<TouristRoutePicture>> GetTouristRoutePictures(Guid touristRouteId)
+    {
+        return await _context.TouristRoutePictures
+                    .Where(e => e.TouristRouteId == touristRouteId)
+                    .ToListAsync();
     }
 }

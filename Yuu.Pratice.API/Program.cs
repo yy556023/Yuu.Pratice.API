@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
@@ -29,9 +30,15 @@ namespace Yuu.Pratice.API
             });
 
             builder.Services.AddScoped<ITouristRouteRepository, TouristRouteRepository>();
-
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddSerilog();
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(setupAction =>{
+                // - 返回不接受指定格式
+                setupAction.ReturnHttpNotAcceptable = true;
+                // setupAction.OutputFormatters.Add(
+                //     new XmlDataContractSerializerOutputFormatter()
+                // );
+            }).AddXmlDataContractSerializerFormatters();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

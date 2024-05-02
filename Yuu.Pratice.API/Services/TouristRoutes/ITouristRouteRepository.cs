@@ -4,6 +4,8 @@ namespace Yuu.Pratice.API.Services.TouristRoutes;
 
 public interface ITouristRouteRepository
 {
-    IEnumerable<TouristRoute> GetTouristRoutes();
-    TouristRoute GetTouristRoute(Guid touristRouteId);
+    Task<IList<TouristRoute>> GetTouristRoutes();
+    Task<TouristRoute> GetTouristRoute(Guid touristRouteId);
+    Task<bool> TouristRouteExist(Guid touristRouteId);
+    Task<IList<TouristRoutePicture>> GetTouristRoutePictures(Guid touristRouteId);
 }
