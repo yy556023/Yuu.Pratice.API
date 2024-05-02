@@ -12,7 +12,8 @@ using Yuu.Pratice.API.Services.TouristRoutes;
 
 namespace Yuu.Pratice.API.Controllers.TouristRoutes
 {
-    [Route("[controller]")]
+    [Route("api/touristRoutes")]
+    [ApiController]
     public class TouristRoutesController(
         ITouristRouteRepository touristRouteRepository,
         IMapper mapper,
