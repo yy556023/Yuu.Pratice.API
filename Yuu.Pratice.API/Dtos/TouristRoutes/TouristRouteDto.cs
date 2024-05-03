@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Yuu.Pratice.API.Models.TouristRoutes;
 
 namespace Yuu.Pratice.API.Dtos.TouristRoutes;
 public class TouristRouteDto
@@ -18,6 +19,7 @@ public class TouristRouteDto
     public string Features { get; set; } = string.Empty;
     public string Fees { get; set; } = string.Empty;
     public string Notes { get; set; } = string.Empty;
+    public ICollection<TouristRoutePicture> TouristRoutePictures { get; set; } = [];
     public double? Rating { get; set; }
     public string TravelDays { get; set; } = string.Empty;
     public string TripType { get; set; } = string.Empty;

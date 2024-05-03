@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.Internal.Mappers;
@@ -25,9 +26,24 @@ namespace Yuu.Pratice.API.Controllers.TouristRoutes
         private readonly ILogger<TouristRoutesController> _logger = logger;
 
         [HttpGet]
-        public async Task<IActionResult> GetTouristRoutes()
+        [HttpHead]
+        public async Task<IActionResult> GetTouristRoutes(
+            [FromQuery] string keyword,
+            string rating
+        )
         {
-            var routes = await _touristRouteRepository.GetTouristRoutes();
+            var regex = new Regex(@"([A-Za-z0-9\-]+)(\d+)");
+            var operatorType = string.Empty;
+            var ratingValue = 0;
+            var match = regex.Match(rating);
+
+            if (match.Success)
+            {
+                operatorType = match.Groups[1].Value;
+                ratingValue = int.Parse(match.Groups[2].Value);
+            }
+
+            var routes = await _touristRouteRepository.GetTouristRoutes(keyword, operatorType, ratingValue);
 
             if (routes == null || routes.Count == 0)
             {
@@ -40,6 +56,7 @@ namespace Yuu.Pratice.API.Controllers.TouristRoutes
         }
 
         [HttpGet("{touristRouteId:Guid}")]
+        [HttpHead]
         public async Task<IActionResult> GetTouristRouteById(Guid touristRouteId)
         {
             var route = await _touristRouteRepository.GetTouristRoute(touristRouteId);

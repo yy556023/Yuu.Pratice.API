@@ -26,7 +26,7 @@ namespace Yuu.Pratice.API.Controllers.TouristRoutes
         [HttpGet]
         public async Task<IActionResult> GetTouristRoutePictures(Guid touristRouteId)
         {
-            if (!(await _touristRouteRepository.TouristRouteExist(touristRouteId)))
+            if (!await _touristRouteRepository.TouristRouteExist(touristRouteId))
             {
                 return NotFound();
             }
@@ -39,6 +39,24 @@ namespace Yuu.Pratice.API.Controllers.TouristRoutes
             }
 
             return Ok(_mapper.Map<IList<TouristRoutePictureDto>>(pictures));
+        }
+
+        [HttpGet("{pictureId}")]
+        public async Task<IActionResult> GetPicture(Guid touristRouteId, int pictureId)
+        {
+            if (!await _touristRouteRepository.TouristRouteExist(touristRouteId))
+            {
+                return NotFound();
+            }
+
+            var picture = await _touristRouteRepository.GetTouristRoutePicture(pictureId);
+
+            if (picture == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<TouristRoutePictureDto>(picture));
         }
     }
 }
